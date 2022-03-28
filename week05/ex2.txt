@@ -1,0 +1,27 @@
+CREATE TABLE Groups
+(
+	groupId int NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE Companies
+(
+	companyId int NOT NULL PRIMARY KEY,
+	groupId int REFERENCES Groups(groupId),
+	superiorCompanyId int,
+
+	CONSTRAINT Structures FOREIGN KEY (SuperiorCompanyId) REFERNCES Companies(companyId)
+);
+
+CREATE TABLE Items
+(
+	itemId INT NOT NULL PRIMARY KEY,
+  	plantId int,
+  
+  	FOREIGN KEY (plantId) REFERENCES Plants(plantId) 
+);
+
+CREATE TABLE Plants
+(
+	plantId int NOT NULL PRIMARY KEY,
+  	companyId int REFERENCES Companies(companyId)
+);

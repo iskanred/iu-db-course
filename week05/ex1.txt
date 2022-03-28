@@ -1,0 +1,62 @@
+CREATE TABLE Customers
+(
+    clientId int NOT NULL PRIMARY KEY,
+    balance float NOT NULL,
+    creditLimit float NOT NULL,
+    discount float
+);
+
+CREATE TABLE Items
+(
+    itemId INT NOT NULL PRIMARY KEY,
+    decription CHAR
+);
+
+CREATE TABLE Orders
+(
+    orderId int NOT NULL PRIMARY KEY,
+    customerId INT NOT NULL REFERENCES Customers(clientId),
+    [date] DATE NOT NULL
+);
+
+CREATE TABLE Manufacturers
+(
+    manufacturerId int NOT NULL PRIMARY KEY,
+    phoneNumber CHAR
+);
+
+CREATE TABLE ItemsToManufacturers
+(
+    manufacturerId int REFERENCES Manufacturers(manufacturerId),
+    itemId INT REFERENCES Items(itemId),
+    quantity INT,
+
+    CONSTRAINT Produce PRIMARY KEY(manufacturerId, itemId)
+);
+
+CREATE TABLE OrdersToItems
+(
+    orderId INT REFERENCES Orders(orderId),
+    customerId INT REFERENCES Customers(clientId),
+  	quantity INT,	
+  
+	CONSTRAINT Includes PRIMARY KEY (orderId, clientId)
+);
+
+CREATE TABLE OrderAddresses
+(
+    orderId INT NOT NULL REFERENCES Orders(orderId) PRIMARY KEY,
+    house int NOT NULL,
+    street char NOT NULL,
+    district int,
+    city int NOT NULL
+);
+
+CREATE TABLE CustomersAddresses
+(
+    customerId INT NOT NULL REFERENCES Customers(clientId) PRIMARY KEY,
+    house int NOT NULL,
+    street char NOT NULL,
+    district int,
+    city int NOT NULL
+);
