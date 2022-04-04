@@ -19,6 +19,7 @@ create table if not exists Items(
 );
 
 create table if not exists Contains(
+	quant integer,
 	orderId integer references Orders(orderId),
 	itemId integer references Items(itemId)
 );
@@ -44,44 +45,36 @@ insert into Items values
 ;
 
 insert into Contains values
-	(2301, 3786),
-	(2301, 4011),
-	(2301, 9132),
-	(2302, 5794),
-	(2303, 4011),
-	(2303, 3141)
+	(3, 2301, 3786),
+	(6, 2301, 4011),
+	(8, 2301, 9132),
+	(4, 2302, 5794),
+	(2, 2303, 4011),
+	(2, 2303, 3141)
 ;
 
 
 
 ---------------------- Queries ---------------------------------------------
-select Customers.name, max(totalPrice)
-select
-	orderId sum(price*count) as totalPrice
-from 
-	Contains, Items, Orders, Customers
-where
-	Contains.itemId = Items.itemId and Contains.orderId = Orders.orderId and Orders.customerId = Customers.customerId
-group by
-	Contains.orderId
-
-;
-
 select 
-	orderId, sum(quant) as totalQuant, sum(price) as totalPrice
+	Contains.orderId, count(Contains.itemId), sum(Items.price * Contains.quant)
 from 
 	Contains, Items
 where 
 	Contains.itemId = Items.itemId
 group by 
-	orderId;
+	Contains.orderId;
 
 
-select 
-	Customers.customerId, Customers.name, Customers.city, max(price*quant)
-from
-
-where
-
-group by
-
+select distinct 
+	Customers.customerId, sum(Contains.quant * Items.price) as cost
+from 
+	Customers, Contains, Orders, Items
+where 
+	Contains.orderId = Orders.orderId and 
+	Orders.customerId = Customers.customerId and
+	Contains.itemId = Items.itemId
+group by 
+	Customers.customerId
+order by 
+	cost desc limit 1;
